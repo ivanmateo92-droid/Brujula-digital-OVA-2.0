@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brújula Digital | OVA</title>
+<style>
+:root{--ink:#17324d;--blue:#2f6fed;--sky:#eaf3ff;--mint:#e9faf3;--gold:#ffd86b;--bg:#f6f8fc;--white:#fff;--muted:#66758a;--shadow:0 10px 30px rgba(23,50,77,.10)}
+*{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+header{background:linear-gradient(135deg,#17324d,#2f6fed);color:white;padding:42px 22px;text-align:center}
+header .compass{font-size:54px} h1{margin:8px 0;font-size:clamp(30px,6vw,50px)} header p{margin:8px auto;max-width:760px;font-size:18px}
+nav{position:sticky;top:0;z-index:10;background:white;box-shadow:0 3px 15px rgba(0,0,0,.08);display:flex;gap:6px;overflow:auto;padding:10px}
+nav button{border:0;background:#eef3f9;color:var(--ink);padding:10px 14px;border-radius:999px;white-space:nowrap;cursor:pointer;font-weight:700}
+nav button:hover,nav button.active{background:var(--blue);color:white}
+main{max-width:1050px;margin:auto;padding:28px 18px 60px}.page{display:none}.page.active{display:block}
+.card{background:white;border-radius:20px;padding:24px;margin:18px 0;box-shadow:var(--shadow)}
+.hero{background:linear-gradient(135deg,#fff,#eaf3ff);border:1px solid #d9e7fb}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.module{padding:22px;border-radius:18px;background:white;box-shadow:var(--shadow);border-top:6px solid var(--blue)}
+.module h3{margin-top:0}.tag{display:inline-block;background:#eaf3ff;color:#2458b8;border-radius:999px;padding:5px 10px;font-size:13px;font-weight:700}
+.btn{border:0;border-radius:12px;padding:12px 18px;background:var(--blue);color:white;font-weight:700;cursor:pointer;margin:5px 4px 5px 0}.btn.secondary{background:#edf1f6;color:var(--ink)}.btn.gold{background:#d69e00}
+.option{display:block;width:100%;text-align:left;background:#f7f9fc;border:2px solid #e3e9f1;padding:15px;border-radius:13px;margin:10px 0;cursor:pointer;font-size:16px}.option:hover{border-color:var(--blue);background:#eef5ff}
+.feedback{display:none;margin-top:15px;padding:16px;border-radius:14px;background:var(--mint);border-left:5px solid #35a97a}.feedback.show{display:block}
+textarea,input{width:100%;padding:13px;border:2px solid #dce3ec;border-radius:12px;font:inherit} textarea{min-height:120px;resize:vertical}
+.progress{height:10px;background:#e8edf4;border-radius:99px;overflow:hidden}.progress span{display:block;height:100%;background:var(--blue);width:0}
+.badges{display:flex;gap:10px;flex-wrap:wrap}.badge{padding:12px 14px;border-radius:15px;background:#edf1f6;color:#8290a2}.badge.earned{background:#fff1b8;color:#725500}
+.notice{padding:14px 16px;background:#fff8df;border-left:5px solid var(--gold);border-radius:12px}
+footer{text-align:center;color:var(--muted);padding:25px}
+.small{color:var(--muted);font-size:14px}.score{font-size:28px;font-weight:800;color:var(--blue)}
+@media(max-width:600px){main{padding:18px 12px 40px}.card{padding:18px}nav{padding:8px}}
+
+/* ===== OVA 2.0 · Refuerzo visual basado en prueba de usuarios ===== */
+.visual-banner{margin:18px 0;padding:18px;border-radius:20px;background:linear-gradient(135deg,#e9f7ff,#f5efff);border:1px solid #cfe8f7;display:grid;grid-template-columns:92px 1fr;gap:16px;align-items:center}
+.visual-icon{width:92px;height:92px;border-radius:22px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(23,50,77,.10)}
+.visual-icon svg{width:70px;height:70px}
+.visual-banner h3{margin:0 0 5px;color:#17324d;font-size:20px}
+.visual-banner p{margin:0;color:#526477}
+.visual-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin:16px 0}
+.visual-card{background:#fff;border:1px solid #dfe9f1;border-radius:18px;padding:16px;box-shadow:0 7px 22px rgba(23,50,77,.07)}
+.visual-card .mini-ill{height:105px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.visual-card h4{margin:4px 0 7px;color:#17324d}
+.visual-card p{margin:0;font-size:14px;color:#596b7c}
+.case-box{margin:18px 0;padding:18px;border-radius:18px;background:#fff8e8;border:1px solid #f0d79a}
+.case-box h3{margin-top:0;color:#6d4e00}
+.decision-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:12px}
+.decision-btn{border:1px solid #d8e5ee;background:#f8fbfd;border-radius:15px;padding:14px;text-align:left;cursor:pointer}
+.decision-btn:hover{border-color:#5a9fd1;background:#eef8ff}
+.decision-feedback{margin-top:12px;padding:14px;border-radius:14px;background:#edf8f1;border-left:5px solid #4e9b6e;display:none}
+.fact-strip{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+.fact-pill{padding:8px 11px;border-radius:999px;background:#eef5fb;color:#31556f;font-size:13px}
+.ai-check{margin:18px 0;padding:18px;border-radius:18px;background:#f3efff;border:1px solid #ddd1f7}
+.ai-check h3{margin-top:0;color:#4f3c79}
+.check-list{display:grid;gap:8px;margin:12px 0}
+.check-item{padding:10px 12px;background:#fff;border-radius:12px;border:1px solid #e5def5}
+@media(max-width:600px){.visual-banner{grid-template-columns:1fr;text-align:center}.visual-icon{margin:auto}}
+
+
+.photo-hero{margin:18px 0;border-radius:22px;overflow:hidden;position:relative;min-height:260px;background:#17324d}
+.photo-hero img{width:100%;height:300px;object-fit:cover;display:block;opacity:.82}
+.photo-hero .photo-caption{position:absolute;left:0;right:0;bottom:0;padding:28px 22px 18px;color:#fff;background:linear-gradient(transparent,rgba(23,50,77,.92))}
+.photo-hero h3{margin:0 0 5px;font-size:24px}
+.photo-hero p{margin:0;font-size:14px}
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:18px 0}
+.photo-card{overflow:hidden;border-radius:18px;background:#fff;border:1px solid #dfe9f1;box-shadow:0 8px 22px rgba(23,50,77,.08)}
+.photo-card img{width:100%;height:170px;object-fit:cover;display:block}
+.photo-card .pc-body{padding:14px}
+.photo-card h4{margin:0 0 7px;color:#17324d;font-size:18px}
+.photo-card p{margin:0;color:#596b7c;font-size:14px}
+.photo-credit{font-size:11px;color:#71808d;margin-top:7px}
+@media(max-width:760px){.photo-grid{grid-template-columns:1fr}.photo-card img{height:210px}}
+
+
+/* ===== Versión 2.0: refuerzo visual por módulo ===== */
+.module-visual{margin:18px 0;border-radius:22px;overflow:hidden;background:#fff;border:1px solid #dbe6ef;box-shadow:0 10px 28px rgba(23,50,77,.09)}
+.module-visual .mv-image{width:100%;height:290px;object-fit:cover;display:block}
+.module-visual .mv-content{padding:20px 22px}
+.module-visual .mv-content h3{margin:0 0 7px;color:#17324d;font-size:24px}
+.module-visual .mv-content p{margin:0;color:#596b7c}
+.visual-pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:18px 0}
+.visual-tile{background:#fff;border:1px solid #dbe6ef;border-radius:18px;overflow:hidden;box-shadow:0 7px 22px rgba(23,50,77,.07)}
+.visual-tile img{width:100%;height:190px;object-fit:cover;display:block}
+.visual-tile .vt-body{padding:15px}
+.visual-tile h4{margin:0 0 6px;color:#17324d}
+.visual-tile p{margin:0;color:#596b7c;font-size:14px}
+.visual-source{font-size:10px;color:#7a8793;margin-top:7px}
+.module-divider{height:1px;background:#e7eef4;margin:20px 0}
+@media(max-width:700px){.visual-pair{grid-template-columns:1fr}.module-visual .mv-image{height:230px}.visual-tile img{height:220px}}
+
+</style>
+</head>
+<body>
+<header>
+  <div class="compass">🧭</div>
+  <h1>Brújula Digital</h1>
+  <p>Objeto Virtual de Aprendizaje para navegar críticamente en la cibercultura</p>
+  <p><strong>Grados 10.º y 11.º</strong> · Información · Privacidad · Inteligencia artificial</p>
+</header>
+
+<nav>
+  <button onclick="showPage('inicio')" class="active">🏠 Inicio</button>
+  <button onclick="showPage('diagnostico')">🧠 Diagnóstico</button>
+  <button onclick="showPage('detecta')">🔎 Detecta</button>
+  <button onclick="showPage('protege')">🔐 Protege</button>
+  <button onclick="showPage('ia_practica')">🧪 IA práctica</button>
+  <button onclick="showPage('decide')">🤖 Decide</button>
+  <button onclick="showPage('muro')">🌐 Muro colectivo</button>
+  <button onclick="showPage('brujula')">🏆 Mi brújula</button>
+</nav>
+
+<main>
+<section id="inicio" class="page active">
+  <div class="card hero">
+    <span class="tag">OVA interactivo</span>
+    <h2>¿Listo para navegar con criterio?</h2>
+    <p>En internet no basta con encontrar información: necesitamos aprender a <strong>evaluarla, proteger nuestra identidad y tomar decisiones responsables frente a la inteligencia artificial</strong>.</p>
+    <button class="btn" onclick="showPage('diagnostico')">Comenzar diagnóstico →</button>
+  </div>
+  <div class="grid">
+    <div class="module"><h3>🔎 Detecta</h3><p>Aprende a cuestionar noticias, imágenes y mensajes antes de compartirlos.</p></div>
+    <div class="module"><h3>🔐 Protege</h3><p>Reconoce riesgos relacionados con privacidad, permisos y huella digital.</p></div>
+    <div class="module"><h3>🤖 Decide</h3><p>Reflexiona sobre el uso ético, crítico y responsable de la IA.</p></div>
+  </div>
+  <div class="card notice"><strong>Importante:</strong> este prototipo no solicita datos personales ni requiere crear una cuenta.</div>
+</section>
+
+<section id="diagnostico" class="page">
+  <div class="card">
+    <span class="tag">Paso 1</span><h2>🧠 ¿Cuál es tu punto de partida?</h2>
+    <p>Imagina que recibes en un grupo una noticia que parece sorprendente. ¿Qué te preocuparía más?</p>
+    <button class="option" onclick="setRoute('detecta')">🔎 No sé si la información es verdadera.</button>
+    <button class="option" onclick="setRoute('protege')">🔐 Me preocupa qué datos personales podría estar compartiendo.</button>
+    <button class="option" onclick="setRoute('decide')">🤖 No sé si la inteligencia artificial está siendo utilizada correctamente.</button>
+    <div id="route" class="feedback"></div>
+  </div>
+</section>
+
+<section id="detecta" class="page">
+  <div class="card hero"><span class="tag">Módulo 1</span><h2>🔎 Detective de desinformación</h2><p>Antes de compartir, detente: <strong>fuente + fecha + evidencia + contraste</strong>.</p></div>
+<div class="module-visual">
+<img class="mv-image" src="https://images.pexels.com/photos/3769982/pexels-photo-3769982.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Estudiante consultando un teléfono mientras estudia">
+<div class="mv-content"><h3>🔎 Verificar antes de compartir</h3><p>En este módulo aprenderás a detenerte frente a una noticia, imagen o mensaje y buscar señales que te ayuden a decidir si es confiable.</p>
+<div class="visual-source">Fotografía: Pexels · recurso visual de apoyo educativo.</div></div>
+</div>
+<div class="visual-pair"><article class="visual-tile">
+<img src="https://images.pexels.com/photos/3769982/pexels-photo-3769982.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Estudiante usando un teléfono para consultar información">
+<div class="vt-body"><h4>📱 Observa el contenido</h4><p>Una pantalla puede llamar tu atención, pero verla no significa que la información sea verdadera.</p><div class="visual-source">Fotografía: Pexels · recurso visual de apoyo educativo.</div></div>
+</article><article class="visual-tile">
+<img src="https://images.pexels.com/photos/6936137/pexels-photo-6936137.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Estudiantes usando teléfonos en un contexto educativo">
+<div class="vt-body"><h4>👥 Contrasta</h4><p>Comparar información con otras fuentes ayuda a identificar datos fuera de contexto o engañosos.</p><div class="visual-source">Fotografía: Pexels · recurso visual de apoyo educativo.</div></div>
+</article></div>
+<div class="module-divider"></div>
+  <div class="card"><h3>Situación 1</h3><p>Te llega un mensaje: <em>“¡Compártelo antes de que lo borren!”</em>. No aparece autor ni fuente.</p>
+    <button class="option" onclick="feedback('d1','A')">Lo comparto rápido porque podría ser importante.</button>
+    <button class="option" onclick="feedback('d1','B')">Reviso quién lo publica y busco confirmación en otras fuentes.</button>
+    <button class="option" onclick="feedback('d1','C')">Lo ignoro sin revisar nada.</button>
+    <div id="d1" class="feedback"></div>
+  </div>
+  <div class="card"><h3>Situación 2</h3><p>Una imagen se vuelve viral, pero no tiene autor ni fecha.</p>
+    <button class="option" onclick="feedback('d2','A')">La considero verdadera porque muchas personas la publicaron.</button>
+    <button class="option" onclick="feedback('d2','B')">Investigo su origen, fecha y contexto.</button>
+    <button class="option" onclick="feedback('d2','C')">La comparto y luego verifico.</button>
+    <div id="d2" class="feedback"></div>
+  </div>
+  <div class="card"><h3>Situación 3</h3><p>Un titular está diseñado para provocar indignación inmediata.</p>
+    <button class="option" onclick="feedback('d3','A')">Leo más allá del titular y contrasto la información.</button>
+    <button class="option" onclick="feedback('d3','B')">Lo comparto para conocer qué opinan los demás.</button>
+    <button class="option" onclick="feedback('d3','C')">Asumo que es cierto porque me genera una emoción fuerte.</button>
+    <div id="d3" class="feedback"></div>
+  </div>
+</section>
+
+<section id="protege" class="page">
+  <div class="card hero"><span class="tag">Módulo 2</span><h2>🔐 Identidad y huella digital</h2><p>Tu información también forma parte de lo que construyes en internet.</p></div>
+<div class="module-visual">
+<img class="mv-image" src="https://images.pexels.com/photos/7777118/pexels-photo-7777118.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Estudiante utilizando teléfono y computador">
+<div class="mv-content"><h3>🔐 Tu información también cuenta</h3><p>Aquí vas a reconocer situaciones cotidianas en las que una aplicación, publicación o permiso puede aumentar tu huella digital.</p>
+<div class="visual-source">Fotografía: Pexels · recurso visual de apoyo educativo.</div></div>
+</div>
+<div class="visual-pair"><article class="visual-tile">
+<img src="https://images.pexels.com/photos/7777118/pexels-photo-7777118.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Estudiante usando dispositivos digitales">
+<div class="vt-body"><h4>📱 Piensa antes de publicar</h4><p>Lo que haces con tus dispositivos puede dejar rastros: fotografías, ubicaciones, contactos y otros datos.</p><div class="visual-source">Fotografía: Pexels · recurso visual de apoyo educativo.</div></div>
+</article><article class="visual-tile">
+<img src="https://images.pexels.com/photos/7777147/pexels-photo-7777147.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Estudiante utilizando un teléfono durante una actividad">
+<div class="vt-body"><h4>🛡️ Revisa permisos</h4><p>No todos los permisos son necesarios. Pregunta qué necesita realmente una aplicación antes de aceptarlos.</p><div class="visual-source">Fotografía: Pexels · recurso visual de apoyo educativo.</div></div>
+</article></div>
+<div class="module-divider"></div>
+  <div class="card"><h3>🧩 Caso práctico: ¿qué huella estás dejando?</h3>
+    <p>Antes de publicar, identifica qué información estás compartiendo y qué podría ocurrir después.</p>
+    <div class="module"><strong>Situación:</strong> una aplicación gratuita te ofrece filtros y premios, pero solicita acceso permanente a ubicación, contactos, micrófono y fotografías.</div>
+    <p><strong>¿Qué harías?</strong></p>
+    <button class="option" onclick="feedback('huella','A')">Acepto todos los permisos para usarla más rápido.</button>
+    <button class="option" onclick="feedback('huella','B')">Reviso permisos, desactivo los innecesarios y busco una alternativa si es necesario.</button>
+    <button class="option" onclick="feedback('huella','C')">Acepto porque una aplicación gratuita no puede representar riesgos.</button>
+    <div id="fhuella" class="feedback"></div>
+  </div>
+  <div class="card"><h3>📌 Mini-infografía: P.A.R.A.</h3>
+    <div class="module"><strong>P</strong> — Permisos: ¿qué solicita? &nbsp; <strong>A</strong> — Audiencia: ¿quién puede verlo? &nbsp; <strong>R</strong> — Rastro: ¿qué queda guardado? &nbsp; <strong>A</strong> — Alternativas: ¿puedo limitarlo o elegir otra opción?</div>
+  </div>
+  <div class="card"><h3>Situación 1</h3><p>Una aplicación te pide acceso permanente a tu ubicación.</p>
+    <button class="option" onclick="feedback('p1','A')">Acepto sin leer.</button>
+    <button class="option" onclick="feedback('p1','B')">Reviso para qué necesita el permiso y si puedo limitarlo.</button>
+    <button class="option" onclick="feedback('p1','C')">Acepto porque todas las aplicaciones lo hacen.</button>
+    <div id="p1" class="feedback"></div>
+  </div>
+  <div class="card"><h3>Situación 2</h3><p>Una app solicita cámara, contactos y micrófono para una función sencilla.</p>
+    <button class="option" onclick="feedback('p2','A')">Analizo si todos esos permisos son necesarios.</button>
+    <button class="option" onclick="feedback('p2','B')">Los acepto para poder continuar.</button>
+    <button class="option" onclick="feedback('p2','C')">Comparto además mis datos con mis amigos.</button>
+    <div id="p2" class="feedback"></div>
+  </div>
+  <div class="card"><h3>Situación 3</h3><p>Quieres publicar una foto donde aparece otra persona.</p>
+    <button class="option" onclick="feedback('p3','A')">La publico porque la foto quedó muy bien.</button>
+    <button class="option" onclick="feedback('p3','B')">Considero su privacidad y pido autorización.</button>
+    <button class="option" onclick="feedback('p3','C')">La publico y la elimino si se molesta.</button>
+    <div id="p3" class="feedback"></div>
+  </div>
+</section>
+
+<section id="decide" class="page">
+  <div class="card hero"><span class="tag">Módulo 3</span><h2>🤖 IA con sentido crítico</h2><p>La IA puede ayudar a aprender, pero no reemplaza la responsabilidad de verificar, decidir y crear.</p></div>
+<div class="module-visual">
+<img class="mv-image" src="https://images.pexels.com/photos/17603742/pexels-photo-17603742/free-photo-of-college-student-chatgpt-for-studying.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Estudiante utilizando una herramienta de inteligencia artificial para estudiar">
+<div class="mv-content"><h3>🤖 IA: usarla no significa creerle todo</h3><p>En este módulo practicarás cómo aprovechar la inteligencia artificial sin abandonar tu criterio: consulta, verifica, contrasta y decide.</p>
+<div class="visual-source">Fotografía: Pexels · recurso visual de apoyo educativo.</div></div>
+</div>
+<div class="visual-pair"><article class="visual-tile">
+<img src="https://images.pexels.com/photos/17603742/pexels-photo-17603742/free-photo-of-college-student-chatgpt-for-studying.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Estudiante usando IA como apoyo para estudiar">
+<div class="vt-body"><h4>💬 Consulta</h4><p>La IA puede ayudarte a generar ideas o explicaciones, pero sus respuestas necesitan revisión.</p><div class="visual-source">Fotografía: Pexels · recurso visual de apoyo educativo.</div></div>
+</article><article class="visual-tile">
+<img src="https://images.pexels.com/photos/7742816/pexels-photo-7742816.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Estudiantes utilizando computadores en el aula">
+<div class="vt-body"><h4>🔎 Verifica</h4><p>Contrasta la respuesta con fuentes confiables y conserva la responsabilidad sobre el resultado final.</p><div class="visual-source">Fotografía: Pexels · recurso visual de apoyo educativo.</div></div>
+</article></div>
+<div class="module-divider"></div>
+  <div class="card"><h3>Situación 1</h3><p>Una IA genera referencias bibliográficas que parecen reales.</p>
+    <button class="option" onclick="feedback('i1','A')">Las uso directamente porque la IA las generó.</button>
+    <button class="option" onclick="feedback('i1','B')">Compruebo que las fuentes existan y corresponden con lo que afirmo.</button>
+    <button class="option" onclick="feedback('i1','C')">Cambio los nombres para que parezcan más confiables.</button>
+    <div id="i1" class="feedback"></div>
+  </div>
+  <div class="card"><h3>Situación 2</h3><p>Usas IA para organizar ideas antes de elaborar un trabajo académico.</p>
+    <button class="option" onclick="feedback('i2','A')">Puede ser válido si reviso, transformo y comprendo el resultado.</button>
+    <button class="option" onclick="feedback('i2','B')">Entrego todo lo generado como si fuera propio.</button>
+    <button class="option" onclick="feedback('i2','C')">Dejo que la IA decida completamente qué debo pensar.</button>
+    <div id="i2" class="feedback"></div>
+  </div>
+  <div class="card"><h3>Situación 3</h3><p>Una IA recomienda candidatos para una beca y podría reproducir sesgos.</p>
+    <button class="option" onclick="feedback('i3','A')">Acepto la recomendación automáticamente.</button>
+    <button class="option" onclick="feedback('i3','B')">Analizo criterios, posibles sesgos y mantengo supervisión humana.</button>
+    <button class="option" onclick="feedback('i3','C')">Elimino a todas las personas que la IA no recomiende.</button>
+    <div id="i3" class="feedback"></div>
+  </div>
+</section>
+
+<section id="muro" class="page">
+  <div class="card">
+    <span class="tag">Construcción colectiva</span>
+    <h2>🌐 Muro colectivo</h2>
+    <p>Escribe un acuerdo que consideres importante para una ciudadanía digital responsable.</p>
+    <textarea id="agreement" placeholder="Ejemplo: Antes de compartir una noticia, verifico su fuente y contexto."></textarea>
+    <button class="btn" onclick="addAgreement()">Publicar mi acuerdo</button>
+    <div id="wall" class="grid"></div>
+    <p class="small">Prototipo académico: los aportes se almacenan localmente en este navegador. Una versión institucional podría incorporar una base de datos compartida y moderación.</p>
+  </div>
+</section>
+
+<section id="brujula" class="page">
+  <div class="card hero">
+    <span class="tag">Cierre</span><h2>🏆 Mi brújula</h2>
+    <p>Revisa tu recorrido y formula un compromiso para navegar de manera más crítica.</p>
+    <div class="progress"><span id="progressBar"></span></div>
+    <p id="progressText" class="small">0 de 9 actividades respondidas</p>
+    <div class="badges">
+      <div id="b1" class="badge">🔎 Explorador crítico</div>
+      <div id="b2" class="badge">🔐 Guardián digital</div>
+      <div id="b3" class="badge">🤖 Navegante de IA</div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>💭 Reflexión final</h3>
+    <p><strong>¿Qué decisión cambiarás a partir de ahora cuando navegues por internet?</strong></p>
+    <textarea id="commitment" placeholder="Escribe tu compromiso personal..."></textarea>
+    <button class="btn gold" onclick="saveCommitment()">Guardar mi compromiso</button>
+    <div id="saved" class="feedback"></div>
+  </div>
+  <div class="card notice"><strong>Idea clave:</strong> ser ciudadano digital crítico implica evaluar información, cuidar la privacidad y utilizar la tecnología —incluida la IA— de manera ética y responsable.</div>
+</section>
+</main>
+
+
+<div class="card notice" style="margin:18px auto;max-width:1050px">
+<strong>Recursos visuales:</strong> las fotografías utilizadas en los módulos fueron seleccionadas de Pexels como apoyo visual educativo y se mantienen los créditos de procedencia dentro de cada recurso.
+</div>
+
+<footer>
+  <strong>Brújula Digital</strong> · Prototipo de OVA · Seminario de Educación y Cibercultura
+  <br><span class="small">Diseñado para estudiantes de 10.º y 11.º</span>
+</footer>
+
+<script>
+const state={answers:0, route:null};
+const correct={
+d1:"B",d2:"B",d3:"A",p1:"B",p2:"A",p3:"B",i1:"B",i2:"A",i3:"B"
+};
+function showPage(id){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+ const btn=[...document.querySelectorAll('nav button')].find(b=>b.getAttribute('onclick')?.includes("'"+id+"'"));
+ if(btn)btn.classList.add('active');
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+function setRoute(route){
+ state.route=route;
+ const names={detecta:"Explorador crítico",protege:"Guardián digital",decide:"Navegante de IA"};
+ document.getElementById('route').innerHTML=`<strong>Tu brújula recomienda comenzar por: ${names[route]}.</strong><br>También puedes explorar los otros módulos cuando quieras. <br><button class="btn" onclick="showPage('${route}')">Ir a mi ruta →</button>`;
+ document.getElementById('route').classList.add('show');
+}
+function feedback(id,answer){
+ const el=document.getElementById(id);
+ const ok=correct[id]===answer;
+ el.innerHTML=ok?"✅ <strong>Muy bien.</strong> Esta decisión aplica una mirada crítica y responsable.":"💡 <strong>Piénsalo de nuevo.</strong> Antes de actuar, conviene verificar, analizar el contexto y considerar las consecuencias.";
+ el.classList.add('show');
+ if(!el.dataset.done){el.dataset.done="1";state.answers++;updateProgress();}
+}
+function updateProgress(){
+ const n=Math.min(state.answers,9), pct=n/9*100;
+ document.getElementById('progressBar').style.width=pct+"%";
+ document.getElementById('progressText').textContent=`${n} de 9 actividades respondidas`;
+ if(n>=3)document.getElementById('b1').classList.add('earned');
+ if(n>=6)document.getElementById('b2').classList.add('earned');
+ if(n>=9)document.getElementById('b3').classList.add('earned');
+}
+function addAgreement(){
+ const t=document.getElementById('agreement').value.trim(); if(!t)return;
+ const arr=JSON.parse(localStorage.getItem('bd_wall')||'[]'); arr.push(t);
+ localStorage.setItem('bd_wall',JSON.stringify(arr)); document.getElementById('agreement').value=''; renderWall();
+}
+function renderWall(){
+ const arr=JSON.parse(localStorage.getItem('bd_wall')||'[]');
+ document.getElementById('wall').innerHTML=arr.map((x,i)=>`<div class="card"><strong>Acuerdo ${i+1}</strong><p>${escapeHtml(x)}</p></div>`).join('');
+}
+function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+function saveCommitment(){
+ const t=document.getElementById('commitment').value.trim();if(!t)return;
+ localStorage.setItem('bd_commitment',t);
+ const e=document.getElementById('saved');e.textContent="✅ Tu compromiso quedó guardado en este navegador.";e.classList.add('show');
+}
+window.addEventListener('load',()=>{
+ renderWall();
+ const c=localStorage.getItem('bd_commitment');if(c)document.getElementById('commitment').value=c;
+});
+</script>
+
+<!-- ===== OVA 2.0 · Recursos visuales y práctica ===== -->
+<section class="visual-banner" aria-label="Aprendizaje visual">
+  <div class="visual-icon">
+    <svg viewBox="0 0 100 100" role="img" aria-label="Brújula digital">
+      <circle cx="50" cy="50" r="36" fill="#e9f7ff" stroke="#245b80" stroke-width="3"/>
+      <path d="M50 22 L61 50 L50 78 L39 50 Z" fill="#6ba9d2" stroke="#245b80" stroke-width="2"/>
+      <circle cx="50" cy="50" r="5" fill="#fff" stroke="#245b80" stroke-width="2"/>
+      <path d="M50 10v8M50 82v8M10 50h8M82 50h8" stroke="#245b80" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div>
+    <h3>Tu brújula para decidir en línea</h3>
+    <p>Ahora no solo lees: <strong>observas, analizas, decides y verificas</strong>. Los recursos visuales y los casos prácticos te ayudan a aplicar la ciudadanía digital a situaciones cotidianas.</p>
+  </div>
+</section>
+
+
+<section class="photo-hero" aria-label="Ciudadanía digital">
+  <img src="https://images.pexels.com/photos/17653298/pexels-photo-17653298/free-photo-of-girl-sitting-at-laptop-and-holding-smartphone.jpeg?auto=compress&dpr=1&h=750&w=1260" alt="Estudiante utilizando un computador portátil y un teléfono inteligente">
+  <div class="photo-caption">
+    <h3>La vida digital también se aprende</h3>
+    <p>Observa situaciones cotidianas, toma decisiones y construye hábitos para navegar con mayor criterio.</p>
+    <div class="photo-credit">Fotografía: Kenzhar Sharap / Pexels. Uso gratuito según licencia de Pexels.</div>
+  </div>
+</section>
+
+<div class="photo-grid">
+  <article class="photo-card">
+    <img src="https://images.pexels.com/photos/7777147/pexels-photo-7777147.jpeg?auto=compress&dpr=1&h=750&w=1260" alt="Estudiante realizando una actividad educativa con un teléfono">
+    <div class="pc-body">
+      <h4>📱 Detecta</h4>
+      <p>Antes de compartir información, revisa la fuente, el contexto y la intención del contenido.</p>
+      <div class="photo-credit">Fotografía: Mikhail Nilov / Pexels.</div>
+    </div>
+  </article>
+
+  <article class="photo-card">
+    <img src="https://images.pexels.com/photos/17653298/pexels-photo-17653298/free-photo-of-girl-sitting-at-laptop-and-holding-smartphone.jpeg?auto=compress&dpr=1&h=750&w=1260" alt="Joven usando computador y teléfono">
+    <div class="pc-body">
+      <h4>🛡️ Protege</h4>
+      <p>Piensa qué datos estás entregando y qué permisos realmente necesita una aplicación.</p>
+      <div class="photo-credit">Fotografía: Kenzhar Sharap / Pexels.</div>
+    </div>
+  </article>
+
+  <article class="photo-card">
+    <img src="https://images.pexels.com/photos/17603742/pexels-photo-17603742/free-photo-of-college-student-chatgpt-for-studying.jpeg?auto=compress&dpr=1&h=750&w=1260" alt="Estudiante utilizando teléfono y material de estudio">
+    <div class="pc-body">
+      <h4>🤖 Decide</h4>
+      <p>Usa la IA como apoyo, pero contrasta sus respuestas con fuentes confiables.</p>
+      <div class="photo-credit">Fotografía: Shantanu Kumar / Pexels.</div>
+    </div>
+  </article>
+</div>
+
+<div class="visual-grid">
+  <article class="visual-card">
+    <div class="mini-ill">
+      <svg viewBox="0 0 180 100" width="180" height="100">
+        <rect x="25" y="12" width="70" height="76" rx="10" fill="#eaf6ff" stroke="#245b80" stroke-width="3"/>
+        <circle cx="60" cy="38" r="12" fill="#8fc5e6"/>
+        <path d="M43 68 Q60 52 77 68" fill="none" stroke="#245b80" stroke-width="4"/>
+        <path d="M105 30 L132 30 M105 48 L150 48 M105 66 L140 66" stroke="#5f778b" stroke-width="5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h4>Identidad digital</h4>
+    <p>Lo que publicas, comentas y compartes también construye una imagen sobre ti.</p>
+  </article>
+
+  <article class="visual-card">
+    <div class="mini-ill">
+      <svg viewBox="0 0 180 100" width="180" height="100">
+        <circle cx="55" cy="50" r="32" fill="#fff2d7" stroke="#a87416" stroke-width="3"/>
+        <path d="M55 25v50M30 50h50" stroke="#a87416" stroke-width="3"/>
+        <path d="M105 30 L150 50 L105 70 Z" fill="#d9eef9" stroke="#245b80" stroke-width="3"/>
+        <circle cx="112" cy="50" r="5" fill="#245b80"/>
+      </svg>
+    </div>
+    <h4>Huella digital</h4>
+    <p>Antes de aceptar permisos o publicar datos, detente y revisa qué información estás entregando.</p>
+  </article>
+
+  <article class="visual-card">
+    <div class="mini-ill">
+      <svg viewBox="0 0 180 100" width="180" height="100">
+        <rect x="28" y="22" width="70" height="55" rx="8" fill="#f0eaff" stroke="#624e8d" stroke-width="3"/>
+        <circle cx="48" cy="45" r="7" fill="#8f78bd"/>
+        <circle cx="78" cy="45" r="7" fill="#8f78bd"/>
+        <path d="M45 61 Q63 72 81 61" fill="none" stroke="#624e8d" stroke-width="3"/>
+        <path d="M110 48 h40 M137 35 l13 13 -13 13" fill="none" stroke="#245b80" stroke-width="4"/>
+      </svg>
+    </div>
+    <h4>IA crítica</h4>
+    <p>Una respuesta de IA puede ser útil, pero no debes asumir que es verdadera sin verificarla.</p>
+  </article>
+</div>
+
+<div class="case-box">
+  <h3>🧭 Caso práctico: una app quiere tus permisos</h3>
+  <p>Descargas una aplicación gratuita. Para funcionar, te pide acceso a tus contactos, ubicación, cámara y micrófono. La aplicación dice que “todo es necesario para mejorar tu experiencia”.</p>
+  <div class="fact-strip">
+    <span class="fact-pill">👀 Observa</span>
+    <span class="fact-pill">🔎 Pregunta</span>
+    <span class="fact-pill">🛡️ Protege</span>
+    <span class="fact-pill">✅ Decide</span>
+  </div>
+  <p><strong>¿Qué harías?</strong></p>
+  <div class="decision-grid">
+    <button class="decision-btn" onclick="showDecision('a')">A. Aceptar todo para poder usar la aplicación.</button>
+    <button class="decision-btn" onclick="showDecision('b')">B. Revisar qué permisos son realmente necesarios y negar los demás.</button>
+    <button class="decision-btn" onclick="showDecision('c')">C. Aceptar porque la aplicación tiene muchas descargas.</button>
+  </div>
+  <div id="decisionFeedback" class="decision-feedback"></div>
+</div>
+
+<div class="ai-check">
+  <h3>🤖 Usa IA, pero activa tu brújula</h3>
+  <p>Consulta una herramienta de inteligencia artificial sobre un tema que estés estudiando. Después, <strong>no te quedes solo con su respuesta</strong>. Contrástala con una fuente confiable.</p>
+  <div class="check-list">
+    <div class="check-item"><strong>1. ¿Quién lo dice?</strong> Identifica la fuente o autor.</div>
+    <div class="check-item"><strong>2. ¿Qué evidencia existe?</strong> Busca datos, referencias o fuentes verificables.</div>
+    <div class="check-item"><strong>3. ¿Qué información estoy entregando?</strong> Evita compartir datos personales o sensibles.</div>
+  </div>
+</div>
+
+<script>
+function showDecision(option){
+  const box=document.getElementById('decisionFeedback');
+  const messages={
+    a:'🟡 Piensa un poco más: aceptar todos los permisos puede exponer información que la aplicación no necesita realmente.',
+    b:'🟢 ¡Muy bien! Revisar y limitar los permisos reduce la exposición innecesaria de tus datos. Esta es la decisión más alineada con una ciudadanía digital crítica.',
+    c:'🟠 Cuidado: tener muchas descargas no demuestra que una aplicación necesite todos esos permisos ni que sea segura.'
+  };
+  box.textContent=messages[option];
+  box.style.display='block';
+}
+</script>
+
+
+<section class="card" style="margin-top:18px">
+  <h3>🖼️ Recursos visuales y créditos</h3>
+  <p>Las fotografías utilizadas en esta versión fueron seleccionadas de Pexels por su disponibilidad para uso gratuito. Se incluyen los créditos dentro del recurso para facilitar la trazabilidad de las fuentes.</p>
+  <ul>
+    <li>Mikhail Nilov — fotografía de aprendizaje móvil — Pexels.</li>
+    <li>Kenzhar Sharap — fotografía de aprendizaje digital — Pexels.</li>
+    <li>Shantanu Kumar — fotografía de estudiante y tecnología — Pexels.</li>
+  </ul>
+</section>
+
+</body>
+</html>
